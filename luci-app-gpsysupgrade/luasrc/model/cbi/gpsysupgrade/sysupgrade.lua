@@ -7,13 +7,13 @@ local ipkg = require("luci.model.ipkg")
 local api = require "luci.model.cbi.gpsysupgrade.api"
 
 function get_system_version()
-	local system_version = luci.sys.exec("[ -f '/etc/openwrt_version' ] && echo -n `cat /etc/openwrt_version`")
+	local system_version = luci.sys.exec("[ -f '/etc/config/oldver.txt' ] && echo -n `cat /etc/config/oldver.txt`")
     return system_version
 end
 
 function check_update()
 		needs_update, notice = false, false
-		remote_version = luci.sys.exec("echo -n $(curl -s https://github.com/ywt114/OpenWrt/releases/download/" ..model.. "/version.txt)")
+		remote_version = luci.sys.exec("echo -n $(curl -s https://github.com/lylus/OpenWrt-OTA/releases/download/" ..dateyr.. "/version.txt)")
 		remoteformat = luci.sys.exec("date -d $(echo " ..remote_version.. " | awk -F. '{printf $3\"-\"$1\"-\"$2}') +%s")
 		fnotice = luci.sys.exec("echo -n " ..remote_version.. " | sed -n '/\\.$/p'")
 		dateyr = luci.sys.exec("echo -n " ..remote_version.. " | awk -F. '{printf $1\".\"$2}'")
@@ -33,9 +33,9 @@ function to_check()
 	if model == "x86_64" then
 		check_update()
 		if fs.access("/sys/firmware/efi") then
-			download_url = "https://github.com/ywt114/OpenWrt/releases/download/" ..model.. "/" ..dateyr.. "-5.10-openwrt-x86-64-generic-squashfs-combined-efi.img.gz"
+			download_url = "https://github.com/ywt114/OpenWrt/releases/download/" ..dateyr.. "/openwrt-x86-64-generic-squashfs-combined-efi.img.gz"
 		else
-			download_url = "https://github.com/ywt114/OpenWrt/releases/download/" ..model.. "/" ..dateyr.. "-5.10-openwrt-x86-64-generic-squashfs-combined.img.gz"
+			download_url = "https://github.com/ywt114/OpenWrt/releases/download/" ..dateyr.. "/openwrt-x86-64-generic-squashfs-combined.img.gz"
 		end
 
 	else
